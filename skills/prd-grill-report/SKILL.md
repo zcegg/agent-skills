@@ -1,6 +1,6 @@
 ---
 name: prd-grill-report
-description: Use when a PRD, requirement draft, wiki page, feature brief, or user story needs a non-interactive interrogation report: analyze ambiguity, inspect relevant code when provided, produce a prioritized QA/question list with recommended answers, and write a local HTML report that stakeholders can open directly.
+description: "Use when a PRD, requirement draft, wiki page, feature brief, or user story needs a non-interactive interrogation report: analyze ambiguity, inspect relevant code when provided, produce a prioritized QA/question list with recommended answers, and write a local HTML report that stakeholders can open directly."
 ---
 
 # PRD Grill Report
