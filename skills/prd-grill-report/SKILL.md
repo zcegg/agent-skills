@@ -117,20 +117,32 @@ Cover these areas when relevant:
 
 ## HTML Report Requirements
 
-Create a single self-contained `.html` file with inline CSS and JavaScript only. Do not depend on external assets, CDNs, fonts, or build tools.
+Create a single self-contained `.html` file that can be sent to another person and opened directly from disk.
 
-Use a professional developer-review style:
+Hard requirements:
+
+- The HTML must work as a standalone file over `file://`.
+- Put all CSS in one inline `<style>` block and all JavaScript in one inline `<script>` block.
+- Do not depend on external assets, CDNs, web fonts, images, SVG files, build tools, local project files, or network requests.
+- Do not use absolute local paths as resource links. Local repo paths may appear only as plain evidence text.
+- Include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
+- The page must remain readable and usable when shared outside the author's machine.
+
+Use a professional developer-review style. The page should feel like a clean internal product/engineering review dashboard, not an AI-generated article:
 
 - Dense but readable dashboard/report layout.
 - Light background with high contrast text.
 - Clear status and priority badges.
-- Sticky summary header on desktop.
-- Table of contents or filter bar for priority/status/owner.
-- Cards or rows for QA items, without nesting cards inside cards.
+- Sticky risk summary on desktop.
+- Filter bar for priority/status/owner plus a text search field.
+- Rows or compact issue panels for QA items, without nesting cards inside cards.
 - Responsive layout for 375px, 768px, 1024px, and 1440px.
 - Visible focus states and keyboard-friendly controls.
 - No emoji as structural icons.
 - No decorative gradient blobs, orbs, or stock-like visuals.
+- No oversized hero, marketing copy, decorative empty space, or generic AI phrasing.
+- No narrow fixed-width report column on large screens; use the available width with a readable max content width.
+- Do not let long text, file paths, URLs, badges, or code overflow their containers.
 
 Recommended visual system:
 
@@ -143,17 +155,87 @@ Recommended visual system:
 - Success: `#16A34A`
 - Danger: `#DC2626`
 - Border: `#E2E8F0`
-- Font stack: `Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`
+- Font stack: `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`
+- Monospace stack for code/evidence: `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`
+
+Layout rules:
+
+- Use a full-width app shell with a constrained inner width: `max-width: 1440px; margin: 0 auto; padding: 24px`.
+- On desktop, use a 12-column CSS grid:
+  - Top summary spans full width.
+  - Risk snapshot and top blockers sit above the full QA list.
+  - Optional side summary may occupy 3-4 columns only when it adds value.
+- On mobile, use a single column and keep filters horizontally scrollable only if needed.
+- Use `box-sizing: border-box`, `overflow-wrap: anywhere` for long evidence, and `min-width: 0` on grid children.
+- Prefer compact typography: body `14-15px`, line height `1.55`, section title `18-22px`, page title `24-32px`.
+- Use 8px radius or less for panels and badges.
 
 HTML sections:
 
-1. Header: feature name, readiness verdict, timestamp, source inputs.
-2. Summary metrics: total questions, P0/P1 count, conflicts, owner distribution.
-3. Readiness assessment: `Ready`, `Ready with assumptions`, or `Not ready`.
-4. Top blockers: P0/P1 items.
-5. Full QA list with filters.
+1. Top bar: feature name, readiness verdict, generated time, source summary. Keep this compact.
+2. Priority strip: total questions, P0/P1 count, conflicts, owners requiring action, readiness.
+3. "What to look at first" section: show the top 3-5 P0/P1/conflict items with owner and recommended next action. This must be visible in the first viewport on desktop.
+4. Risk matrix: compact owner x priority or status distribution.
+5. Filterable full QA list.
 6. Evidence and assumptions.
 7. Recommended next step: PRD update, product/backend/design confirmation, `zoom-out`, `draft solution`, or `implementation-plan`.
+
+First viewport rule:
+
+- A reviewer must be able to see the verdict, P0/P1 count, conflict count, and top blockers without scrolling on a normal desktop viewport.
+- Do not place long background explanation before the key risks.
+- Put PRD/source metadata in a compact details row or collapsible details block after the risk summary.
+
+QA item visual rules:
+
+- Each item starts with a strong title line: `Q<number> <short problem statement>`.
+- Immediately below the title, show badges in this order: priority, status, owner.
+- Put `Why it matters` and `Recommended answer` above lower-level evidence.
+- Evidence should be in a muted bordered block or compact list.
+- P0 and Conflict items must have stronger visual weight: red left border or red priority badge.
+- P1 items use orange.
+- P2 items use blue.
+- P3 items use gray.
+- Avoid huge vertical gaps. Dense scanning is more important than decorative spacing.
+
+Suggested HTML skeleton:
+
+```html
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PRD QA 拷打报告</title>
+  <style>/* all CSS here */</style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">...</header>
+    <section class="priority-strip">...</section>
+    <section class="focus-board">...</section>
+    <section class="filters">...</section>
+    <section class="qa-list">...</section>
+  </main>
+  <script>/* filter/search only, no external dependency */</script>
+</body>
+</html>
+```
+
+Minimum CSS behavior:
+
+```css
+* { box-sizing: border-box; }
+body { margin: 0; background: #f8fafc; color: #1e293b; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+.shell { max-width: 1440px; margin: 0 auto; padding: 24px; }
+.dashboard-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
+.panel { min-width: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; }
+.evidence, code { overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .shell { padding: 16px; }
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+```
 
 ## Readiness Verdict
 
