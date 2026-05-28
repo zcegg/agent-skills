@@ -1,0 +1,4 @@
+interface:
+  display_name: "PRD Grill Report"
+  short_description: "Generate a non-interactive PRD ambiguity QA report as a local HTML file."
+  default_prompt: "Use prd-grill-report to analyze this PRD, inspect relevant code evidence if provided, and generate a local HTML QA report with prioritized questions, why each matters, recommended answers, owners, status, and readiness."
