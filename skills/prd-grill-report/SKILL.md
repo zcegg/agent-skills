@@ -340,6 +340,30 @@ body { margin: 0; background: #f6f7f9; color: #1f2937; font-family: -apple-syste
 }
 ```
 
+## HTML Quality Gate
+
+Before responding that the report is complete, inspect the generated HTML file. If any required check fails, rewrite the HTML before final output.
+
+Required checks:
+
+- HTML contains `<header class="hero">`.
+- CSS contains `.hero { background: #111827` or an equivalent `.hero` rule whose background is `#111827`.
+- CSS contains `body { margin: 0; background: #f6f7f9`.
+- HTML contains `<main class="shell">`.
+- HTML contains a conclusion panel with `class="panel conclusion"`.
+- HTML contains a metric grid with `class="metric-grid"`.
+- HTML does not use a centered article layout such as `max-width: 960px`, `max-width: 1000px`, `max-width: 1100px`, or `margin: 0 auto` as the main page layout without the dark full-width header.
+- HTML does not use English section titles like `Executive Summary`, `Problem Statement`, `Proposed Solution`, `Success Criteria`, or `User Experience & Functionality` unless the source PRD itself is English and the user asked for English output.
+- First viewport contains the dark header, conclusion panel, and metric cards.
+
+If a check fails, do not ask the user whether to fix it. Fix it immediately and then deliver the corrected file.
+
+Suggested validation command when a local shell is available:
+
+```bash
+rg -n 'class="hero"|#111827|#f6f7f9|class="panel conclusion"|class="metric-grid"|Executive Summary|Problem Statement|Proposed Solution|Success Criteria|max-width: 960px|max-width: 1000px|max-width: 1100px' <generated-report.html>
+```
+
 ## Readiness Verdict
 
 Use:
