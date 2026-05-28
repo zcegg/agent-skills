@@ -128,6 +128,19 @@ Hard requirements:
 - Include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
 - The page must remain readable and usable when shared outside the author's machine.
 
+Use the default visual template below every time unless the user explicitly asks for another style.
+
+Default template: **Full-width executive risk dashboard**
+
+- Dark navy top band, full browser width, height about 120-150px.
+- Top band contains only title and compact metadata/source text.
+- Main page background is light gray.
+- Content width is almost full screen with comfortable gutters, not centered as a narrow article.
+- First content panel is a white conclusion panel with metric cards and a pale warning callout.
+- Subsequent panels are white bordered sections: PRD summary, top blockers, filters, full QA list.
+- The style should match an internal engineering review dashboard: restrained, sharp, useful, and calm.
+- This default style is not random. Do not switch to centered article, landing page, dark full-page, glassmorphism, bento, hero, gradient, or decorative dashboard styles unless asked.
+
 Use a professional developer-review style. The page should feel like a clean internal product/engineering review dashboard, not an AI-generated article:
 
 - Dense but readable dashboard/report layout.
@@ -142,6 +155,8 @@ Use a professional developer-review style. The page should feel like a clean int
 - No decorative gradient blobs, orbs, or stock-like visuals.
 - No oversized hero, marketing copy, decorative empty space, or generic AI phrasing.
 - No narrow fixed-width report column on large screens; use the available width with a readable max content width.
+- Do not center the whole report as a narrow `max-width: 960px` article.
+- Do not put metric cards above the conclusion panel as a detached centered row.
 - Do not let long text, file paths, URLs, badges, or code overflow their containers.
 
 Recommended visual system:
@@ -155,12 +170,17 @@ Recommended visual system:
 - Success: `#16A34A`
 - Danger: `#DC2626`
 - Border: `#E2E8F0`
+- Header background: `#0F172A`
+- Header muted text: `#94A3B8`
+- Warning background: `#FFF7ED`
 - Font stack: `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`
 - Monospace stack for code/evidence: `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`
 
 Layout rules:
 
-- Use a full-width app shell with a constrained inner width: `max-width: 1440px; margin: 0 auto; padding: 24px`.
+- Use a full-width app shell with a constrained inner width: `max-width: none; width: 100%; padding: 24px`.
+- For very wide screens, content may use `max-width: 1600px; margin: 0 auto`, but must not be narrower than the available workspace.
+- The dark top band is outside the card layout and spans full viewport width.
 - On desktop, use a 12-column CSS grid:
   - Top summary spans full width.
   - Risk snapshot and top blockers sit above the full QA list.
@@ -172,13 +192,14 @@ Layout rules:
 
 HTML sections:
 
-1. Top bar: feature name, readiness verdict, generated time, source summary. Keep this compact.
-2. Priority strip: total questions, P0/P1 count, conflicts, owners requiring action, readiness.
-3. "What to look at first" section: show the top 3-5 P0/P1/conflict items with owner and recommended next action. This must be visible in the first viewport on desktop.
-4. Risk matrix: compact owner x priority or status distribution.
-5. Filterable full QA list.
-6. Evidence and assumptions.
-7. Recommended next step: PRD update, product/backend/design confirmation, `zoom-out`, `draft solution`, or `implementation-plan`.
+1. Dark top band: feature name, PRD/source metadata, generated time, repository scope.
+2. Conclusion panel: section title, metric cards, readiness verdict, and one-sentence decision summary.
+3. Warning callout inside conclusion panel: explain why the PRD is or is not ready.
+4. PRD summary / evidence scope panel.
+5. "What to look at first" section: show the top 3-5 P0/P1/conflict items with owner and recommended next action. This must be visible near the first viewport on desktop.
+6. Filterable full QA list.
+7. Evidence and assumptions.
+8. Recommended next step: PRD update, product/backend/design confirmation, `zoom-out`, `draft solution`, or `implementation-plan`.
 
 First viewport rule:
 
@@ -210,10 +231,18 @@ Suggested HTML skeleton:
   <style>/* all CSS here */</style>
 </head>
 <body>
+  <header class="hero">
+    <h1>...</h1>
+    <p class="meta">...</p>
+  </header>
   <main class="shell">
-    <header class="topbar">...</header>
-    <section class="priority-strip">...</section>
-    <section class="focus-board">...</section>
+    <section class="panel conclusion">
+      <h2>结论</h2>
+      <div class="metric-grid">...</div>
+      <div class="callout">...</div>
+    </section>
+    <section class="panel summary">...</section>
+    <section class="panel focus-board">...</section>
     <section class="filters">...</section>
     <section class="qa-list">...</section>
   </main>
@@ -227,13 +256,19 @@ Minimum CSS behavior:
 ```css
 * { box-sizing: border-box; }
 body { margin: 0; background: #f8fafc; color: #1e293b; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-.shell { max-width: 1440px; margin: 0 auto; padding: 24px; }
+.hero { background: #0f172a; color: #fff; padding: 32px 24px; }
+.hero .meta { color: #94a3b8; }
+.shell { width: 100%; max-width: 1600px; margin: 0 auto; padding: 24px; }
 .dashboard-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
-.panel { min-width: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; }
+.panel { min-width: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
+.metric-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+.metric { border: 1px solid #dbe3ef; border-radius: 6px; padding: 14px; background: #f8fafc; }
+.callout { border-left: 4px solid #dc2626; background: #fff7ed; padding: 14px 16px; }
 .evidence, code { overflow-wrap: anywhere; }
 @media (max-width: 760px) {
   .shell { padding: 16px; }
   .dashboard-grid { grid-template-columns: 1fr; }
+  .metric-grid { grid-template-columns: 1fr 1fr; }
 }
 ```
 
