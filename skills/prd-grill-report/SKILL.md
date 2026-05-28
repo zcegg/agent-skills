@@ -48,24 +48,67 @@ Accept any of these:
 - PRD link, wiki link, local Markdown/HTML/doc text, pasted requirement draft, issue description, screenshots, or conversation context.
 - Optional related repository path.
 - Optional focus modules, routes, files, API names, screenshots, or design links.
+- PRD screenshots, embedded images, flow charts, prototype images, table screenshots, or image-only requirement notes.
 
 If a repository path or relevant files are provided, inspect code before finalizing the report. Do not scan the whole repository blindly. Search for evidence around routes, page names, components, stores, API modules, enums, permissions, tests, and existing similar flows.
 
 If no repository is provided, state that code evidence was not available and classify recommendations as PRD-based.
 
+## Image and OCR Requirements
+
+PRD images are first-class requirement evidence. Do not ignore screenshots, flowcharts, prototype images, or image-only tables.
+
+When the PRD source contains images:
+
+1. Identify every requirement-relevant image and its surrounding PRD context.
+2. For each image, extract useful content before generating the QA report:
+   - UI structure, fields, buttons, table columns, states, labels, badges, dialogs, and navigation.
+   - Flowchart nodes, arrows, conditions, branches, owners, and terminal states.
+   - Screenshot text, enum values, error messages, status names, API/field names, and annotations.
+3. Prefer direct visual understanding for UI screenshots and prototypes.
+4. Use OCR for text-heavy images, table screenshots, dense annotations, or small text that visual reading may miss.
+5. Compare image-derived requirements with PRD text and code evidence. Mark disagreements as `Conflict`.
+6. Include an "Image evidence" subsection in the HTML report when images were analyzed.
+
+OCR/tooling policy:
+
+- Use built-in visual analysis when images are available in the conversation or can be captured as screenshots.
+- If a reliable OCR tool is available locally, use it for text-heavy images.
+- Preferred OCR options, in order:
+  1. PaddleOCR or PaddleOCR CLI for Chinese + English mixed screenshots.
+  2. Tesseract with `chi_sim+eng` language data for general OCR.
+  3. EasyOCR when PaddleOCR/Tesseract are unavailable and the environment already has it installed.
+- Do not silently invent OCR results. If OCR is unavailable or low confidence, state this in the report and add a QA item for manual confirmation.
+- Do not send private PRD images to external network OCR services unless the user explicitly approves that exact service and data transfer.
+- If image extraction from a wiki page fails, capture full-page or element screenshots with the authenticated browser, then analyze those screenshots.
+
+For each analyzed image, record:
+
+```text
+Image: <image index, filename, page section, or screenshot crop>
+Detected content: <short structured summary>
+Requirement signal: <what new requirement or constraint the image adds>
+Conflicts/gaps: <where it differs from text/code, or "None found">
+Confidence: High | Medium | Low
+Method: Visual analysis | OCR | Visual analysis + OCR
+```
+
+If images exist but cannot be analyzed, the report readiness cannot be `Ready`; use `Ready with assumptions` or `Not ready` depending on risk.
+
 ## Analysis Workflow
 
 1. Extract the PRD's stated goal, actors, entry points, user journey, visible UI, data fields, APIs, permissions, business rules, success criteria, and non-goals.
-2. Classify facts as:
+2. Extract image-derived evidence if the PRD contains screenshots, flowcharts, prototype images, or image-only tables.
+3. Classify facts as:
    - `Confirmed` - stated in PRD or verified from code/docs.
    - `Inferred` - likely from context or existing patterns.
    - `Unknown` - missing and important.
    - `Conflict` - PRD conflicts with itself, code, API, screenshots, or examples.
-3. Inspect relevant code/docs before asking for clarification if code context is available.
-4. Generate questions by risk, not document order.
-5. Provide recommended answers where reasonable, but do not pretend product/backend/business decisions are confirmed.
-6. Assign an owner for each unresolved item: Product, Business, Backend, Design, QA, Data, Frontend, or Cross-functional.
-7. Produce an HTML report that is easy to share in browser review.
+4. Inspect relevant code/docs before asking for clarification if code context is available.
+5. Generate questions by risk, not document order.
+6. Provide recommended answers where reasonable, but do not pretend product/backend/business decisions are confirmed.
+7. Assign an owner for each unresolved item: Product, Business, Backend, Design, QA, Data, Frontend, or Cross-functional.
+8. Produce an HTML report that is easy to share in browser review.
 
 ## QA Item Format
 
@@ -128,16 +171,17 @@ Hard requirements:
 - Include `<meta name="viewport" content="width=device-width, initial-scale=1">`.
 - The page must remain readable and usable when shared outside the author's machine.
 
-Use the default visual template below every time unless the user explicitly asks for another style.
+Use the locked visual template below every time unless the user explicitly asks for another style.
 
-Default template: **Full-width executive risk dashboard**
+Locked default template: **Dark-header full-width risk report**
 
-- Dark navy top band, full browser width, height about 120-150px.
-- Top band contains only title and compact metadata/source text.
-- Main page background is light gray.
+- This template matches the approved local reference style: `prd-grill-report-minsu-audit-house-qa.html`.
+- Dark header band, full browser width, about 120-150px.
+- Header contains only report title and compact metadata/source text.
+- Main page background is light gray `#f6f7f9`.
 - Content width is almost full screen with comfortable gutters, not centered as a narrow article.
 - First content panel is a white conclusion panel with metric cards and a pale warning callout.
-- Subsequent panels are white bordered sections: PRD summary, top blockers, filters, full QA list.
+- Subsequent panels are white bordered sections: PRD summary, evidence scope, top blockers, filters, full QA list, and image evidence when relevant.
 - The style should match an internal engineering review dashboard: restrained, sharp, useful, and calm.
 - This default style is not random. Do not switch to centered article, landing page, dark full-page, glassmorphism, bento, hero, gradient, or decorative dashboard styles unless asked.
 
@@ -159,21 +203,24 @@ Use a professional developer-review style. The page should feel like a clean int
 - Do not put metric cards above the conclusion panel as a detached centered row.
 - Do not let long text, file paths, URLs, badges, or code overflow their containers.
 
-Recommended visual system:
+Required visual system:
 
-- Background: `#F8FAFC`
+- Background: `#F6F7F9`
 - Surface: `#FFFFFF`
-- Text: `#1E293B`
-- Muted text: `#64748B`
+- Text: `#1F2937`
+- Muted text: `#667085`
 - Primary: `#2563EB`
 - Warning/CTA: `#F97316`
-- Success: `#16A34A`
-- Danger: `#DC2626`
-- Border: `#E2E8F0`
-- Header background: `#0F172A`
-- Header muted text: `#94A3B8`
+- Success: `#067647`
+- Danger/P0: `#B42318`
+- P1: `#B54708`
+- P2: `#175CD3`
+- Need confirmation: `#7F56D9`
+- Border: `#D9DEE8`
+- Header background: `#111827`
+- Header muted text: `#D0D5DD`
 - Warning background: `#FFF7ED`
-- Font stack: `ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`
+- Font stack: `-apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif`
 - Monospace stack for code/evidence: `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`
 
 Layout rules:
@@ -189,6 +236,13 @@ Layout rules:
 - Use `box-sizing: border-box`, `overflow-wrap: anywhere` for long evidence, and `min-width: 0` on grid children.
 - Prefer compact typography: body `14-15px`, line height `1.55`, section title `18-22px`, page title `24-32px`.
 - Use 8px radius or less for panels and badges.
+- Use the same visual proportions as the locked reference:
+  - Header padding: `32px 40px 24px`.
+  - Main padding: `28px 40px 48px`.
+  - Section padding: `22px`.
+  - Section margin-bottom: `18px`.
+  - Metric grid: `repeat(4, minmax(160px, 1fr))` or `repeat(5, minmax(160px, 1fr))` only when readiness is shown as a metric.
+  - QA detail grid: `180px 1fr` on desktop, single column on mobile.
 
 HTML sections:
 
@@ -196,10 +250,11 @@ HTML sections:
 2. Conclusion panel: section title, metric cards, readiness verdict, and one-sentence decision summary.
 3. Warning callout inside conclusion panel: explain why the PRD is or is not ready.
 4. PRD summary / evidence scope panel.
-5. "What to look at first" section: show the top 3-5 P0/P1/conflict items with owner and recommended next action. This must be visible near the first viewport on desktop.
-6. Filterable full QA list.
-7. Evidence and assumptions.
-8. Recommended next step: PRD update, product/backend/design confirmation, `zoom-out`, `draft solution`, or `implementation-plan`.
+5. Image evidence panel when images were analyzed or when images could not be analyzed.
+6. "What to look at first" section: show the top 3-5 P0/P1/conflict items with owner and recommended next action. This must be visible near the first viewport on desktop.
+7. Filterable full QA list.
+8. Evidence and assumptions.
+9. Recommended next step: PRD update, product/backend/design confirmation, `zoom-out`, `draft solution`, or `implementation-plan`.
 
 First viewport rule:
 
@@ -255,20 +310,33 @@ Minimum CSS behavior:
 
 ```css
 * { box-sizing: border-box; }
-body { margin: 0; background: #f8fafc; color: #1e293b; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-.hero { background: #0f172a; color: #fff; padding: 32px 24px; }
-.hero .meta { color: #94a3b8; }
-.shell { width: 100%; max-width: 1600px; margin: 0 auto; padding: 24px; }
+body { margin: 0; background: #f6f7f9; color: #1f2937; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.55; }
+.hero { background: #111827; color: #fff; padding: 32px 40px 24px; }
+.hero h1 { margin: 0 0 10px; font-size: 28px; }
+.hero .meta { margin: 4px 0; color: #d0d5dd; }
+.shell { width: 100%; max-width: 1600px; margin: 0 auto; padding: 28px 40px 48px; }
 .dashboard-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
-.panel { min-width: 0; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
-.metric-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
-.metric { border: 1px solid #dbe3ef; border-radius: 6px; padding: 14px; background: #f8fafc; }
-.callout { border-left: 4px solid #dc2626; background: #fff7ed; padding: 14px 16px; }
+.panel { min-width: 0; background: #fff; border: 1px solid #d9dee8; border-radius: 8px; margin-bottom: 18px; padding: 22px; }
+.metric-grid { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 12px; }
+.metric { border: 1px solid #d9dee8; border-radius: 6px; padding: 12px; background: #fbfcfe; }
+.metric b { display: block; font-size: 24px; }
+.metric span { color: #667085; font-size: 13px; }
+.tag { border: 1px solid #d9dee8; border-radius: 999px; padding: 3px 10px; font-size: 12px; background: #f8fafc; color: #344054; }
+.p0 { color: #b42318; border-color: #fda29b; background: #fff1f0; }
+.p1 { color: #b54708; border-color: #fedf89; background: #fffaeb; }
+.p2 { color: #175cd3; border-color: #b2ddff; background: #eff8ff; }
+.confirmed { color: #067647; border-color: #abefc6; background: #ecfdf3; }
+.needs { color: #7f56d9; border-color: #d6bbfb; background: #f4f3ff; }
+.callout { border-left: 4px solid #b42318; background: #fff7ed; padding: 14px 16px; }
+.qa { border-top: 1px solid #d9dee8; padding-top: 18px; margin-top: 18px; }
+.detail-grid { display: grid; grid-template-columns: 180px 1fr; gap: 8px 16px; margin-top: 10px; }
+.label { color: #667085; font-weight: 600; }
 .evidence, code { overflow-wrap: anywhere; }
 @media (max-width: 760px) {
-  .shell { padding: 16px; }
+  .hero, .shell { padding-left: 18px; padding-right: 18px; }
   .dashboard-grid { grid-template-columns: 1fr; }
   .metric-grid { grid-template-columns: 1fr 1fr; }
+  .detail-grid { grid-template-columns: 1fr; }
 }
 ```
 
