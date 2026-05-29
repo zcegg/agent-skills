@@ -9,6 +9,10 @@ description: "Use when a PRD, requirement draft, wiki page, feature brief, or us
 
 Generate a non-interactive PRD interrogation report.
 
+Primary goal: help the implementer and stakeholders answer **"what exactly needs to be built?"**
+
+This is not a solution design skill, not a code review skill, and not a UI artifact generator. The HTML is only the delivery container. The value is the precision of the requirement questions and the evidence behind them.
+
 This skill is the report-oriented counterpart to `prd-grill`:
 
 - `prd-grill` asks one highest-risk question at a time and adapts to the user's answers.
@@ -18,10 +22,11 @@ Use this when the user is a frontend developer or implementation owner who shoul
 
 ## Core Output
 
-Always produce:
+Only produce:
 
-1. A prioritized QA list in the conversation.
-2. A standalone local HTML file containing the full report.
+1. One standalone local HTML file containing the full report.
+
+Do not generate PNG, screenshots, PDF, Markdown reports, slide decks, spreadsheets, or duplicate artifacts unless the user explicitly requests them. Keep the final conversation response short and point to the HTML file.
 
 Default output path:
 
@@ -53,6 +58,37 @@ Accept any of these:
 If a repository path or relevant files are provided, inspect code before finalizing the report. Do not scan the whole repository blindly. Search for evidence around routes, page names, components, stores, API modules, enums, permissions, tests, and existing similar flows.
 
 If no repository is provided, state that code evidence was not available and classify recommendations as PRD-based.
+
+## Work Budget and Scope Control
+
+Optimize for question value and precision, not breadth.
+
+Do:
+
+- Read the PRD and extract what the product is asking to change.
+- Inspect only code/docs that can confirm entry points, current behavior, API contracts, data models, permissions, enums, routes, and existing similar flows.
+- Analyze PRD images only when they contain requirement-relevant UI, fields, flows, tables, or annotations.
+- Prioritize P0/P1 questions that block understanding of what to build.
+
+Do not:
+
+- Scan the entire repository.
+- Produce solution design, implementation plan, code, test plan, CR notes, or acceptance-test documents.
+- Generate a generic checklist.
+- Spend time redesigning the report UI; use the fixed template.
+- Add low-value P2/P3 questions just to make the report look comprehensive.
+- Include questions whose answer would not change scope, implementation, API/data contract, permissions, UX behavior, or acceptance criteria.
+
+Every included question must pass at least one value test:
+
+- It changes what UI, flow, state, field, permission, business rule, or data contract must be built.
+- It blocks frontend/backend/API agreement.
+- It affects acceptance criteria or test cases.
+- It exposes a conflict between PRD text, image evidence, code, or existing behavior.
+- It prevents the frontend implementer from guessing product/business/backend intent.
+- It affects rollout, compatibility, history data, auditability, or compliance.
+
+If a potential question fails all value tests, omit it.
 
 ## Image and OCR Requirements
 
@@ -104,11 +140,13 @@ If images exist but cannot be analyzed, the report readiness cannot be `Ready`; 
    - `Inferred` - likely from context or existing patterns.
    - `Unknown` - missing and important.
    - `Conflict` - PRD conflicts with itself, code, API, screenshots, or examples.
-4. Inspect relevant code/docs before asking for clarification if code context is available.
-5. Generate questions by risk, not document order.
-6. Provide recommended answers where reasonable, but do not pretend product/backend/business decisions are confirmed.
-7. Assign an owner for each unresolved item: Product, Business, Backend, Design, QA, Data, Frontend, or Cross-functional.
-8. Produce an HTML report that is easy to share in browser review.
+4. Build a concise "what to build" map: entry points, changed screens/components, changed data/API contracts, changed permissions, changed states, changed rules, and non-goals.
+5. Inspect relevant code/docs only where it improves question precision or validates a conflict.
+6. Generate questions by risk, not document order.
+7. Keep only questions that pass the value tests above.
+8. Provide recommended answers where reasonable, but do not pretend product/backend/business decisions are confirmed.
+9. Assign an owner for each unresolved item: Product, Business, Backend, Design, QA, Data, Frontend, or Cross-functional.
+10. Produce exactly one HTML report.
 
 ## QA Item Format
 
@@ -285,14 +323,15 @@ Layout rules:
 HTML sections:
 
 1. Dark top band: feature name, PRD/source metadata, generated time, repository scope.
-2. Conclusion panel: section title, metric cards, readiness verdict, and one-sentence decision summary.
+2. Conclusion panel: section title, metric cards, readiness verdict, and one-sentence "what to build" summary.
 3. Warning callout inside conclusion panel: explain why the PRD is or is not ready.
-4. PRD summary / evidence scope panel.
-5. Image evidence panel when images were analyzed or when images could not be analyzed.
-6. "What to look at first" section: show the top 3-5 P0/P1/conflict items with owner and recommended next action. This must be visible near the first viewport on desktop.
-7. Filterable full QA list.
-8. Evidence and assumptions.
-9. Recommended next step: PRD update, product/backend/design confirmation, `zoom-out`, `draft solution`, or `implementation-plan`.
+4. "What to build" panel: concise scope map of entry points, UI changes, data/API changes, rules, states, and non-goals.
+5. PRD summary / evidence scope panel.
+6. Image evidence panel when images were analyzed or when images could not be analyzed.
+7. "What to look at first" section: show the top 3-5 P0/P1/conflict items with owner and recommended next action. This must be visible near the first viewport on desktop.
+8. Filterable full QA list.
+9. Evidence and assumptions.
+10. Recommended next step: PRD update, product/backend/design confirmation, `zoom-out`, `draft solution`, or `implementation-plan`.
 
 First viewport rule:
 
@@ -424,14 +463,10 @@ Generated: <absolute path to html>
 
 Readiness: <Ready | Ready with assumptions | Not ready>
 
-Top blockers:
-- ...
-
-Suggested next step:
-- ...
+Top blockers: <count>
 ```
 
-Keep the conversation summary short. The HTML file is the complete artifact.
+Keep the conversation summary short. The HTML file is the only complete artifact.
 
 ## Common Mistakes
 
