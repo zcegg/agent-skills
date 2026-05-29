@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{TITLE}}</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #fff;
+      --text: #1f2937;
+      --muted: #667085;
+      --line: #d9dee8;
+      --p0: #b42318;
+      --p1: #b54708;
+      --p2: #175cd3;
+      --ok: #067647;
+      --warn: #b54708;
+      --need: #7f56d9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+    }
+    header {
+      padding: 32px 40px 24px;
+      background: #111827;
+      color: #fff;
+    }
+    header h1 { margin: 0 0 10px; font-size: 28px; }
+    header p { margin: 4px 0; color: #d0d5dd; }
+    main { padding: 28px 40px 48px; }
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      margin-bottom: 18px;
+      padding: 22px;
+    }
+    h2 { margin: 0 0 14px; font-size: 20px; }
+    h3 { margin: 0 0 10px; font-size: 17px; }
+    p { margin: 8px 0; }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      background: #fbfcfe;
+    }
+    .metric b { display: block; font-size: 24px; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0 14px;
+    }
+    .tag {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 12px;
+      background: #f8fafc;
+      color: #344054;
+      white-space: nowrap;
+    }
+    .p0 { color: var(--p0); border-color: #fda29b; background: #fff1f0; }
+    .p1 { color: var(--p1); border-color: #fedf89; background: #fffaeb; }
+    .p2 { color: var(--p2); border-color: #b2ddff; background: #eff8ff; }
+    .confirmed { color: var(--ok); border-color: #abefc6; background: #ecfdf3; }
+    .needs { color: var(--need); border-color: #d6bbfb; background: #f4f3ff; }
+    .warn { color: var(--warn); border-color: #fedf89; background: #fffaeb; }
+    .callout {
+      border-left: 4px solid var(--p0);
+      background: #fff7ed;
+      padding: 12px 14px;
+      margin-top: 12px;
+    }
+    .qa {
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+      margin-top: 18px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 8px 16px;
+      margin-top: 10px;
+    }
+    .label {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    code {
+      background: #f2f4f7;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+    ul { margin: 6px 0 0 18px; padding: 0; }
+    li { margin: 2px 0; }
+    .evidence {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 10px 12px;
+      overflow-wrap: anywhere;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8px 0 4px;
+    }
+    .toolbar input,
+    .toolbar select {
+      min-height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 6px 10px;
+      background: #fff;
+      color: var(--text);
+    }
+    .toolbar input { min-width: 260px; flex: 1; }
+    .hidden { display: none; }
+    @media (max-width: 900px) {
+      header, main { padding-left: 18px; padding-right: 18px; }
+      .summary { grid-template-columns: 1fr 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .toolbar input { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>{{TITLE}}</h1>
+    {{META_LINES}}
+  </header>
+
+  <main>
+    <section>
+      <h2>结论</h2>
+      <div class="summary">
+        {{METRICS}}
+      </div>
+      <p>{{READINESS_SUMMARY}}</p>
+      {{CONCLUSION_CALLOUT}}
+    </section>
+
+    <section>
+      <h2>PRD 摘要</h2>
+      {{PRD_SUMMARY}}
+    </section>
+
+    {{IMAGE_EVIDENCE_SECTION}}
+
+    <section>
+      <h2>优先关注</h2>
+      {{TOP_BLOCKERS}}
+    </section>
+
+    <section>
+      <h2>问题清单</h2>
+      <div class="toolbar" aria-label="筛选问题">
+        <input id="search" type="search" placeholder="搜索问题、负责人、状态、证据">
+        <select id="priority">
+          <option value="">全部优先级</option>
+          <option value="P0">P0</option>
+          <option value="P1">P1</option>
+          <option value="P2">P2</option>
+          <option value="P3">P3</option>
+        </select>
+        <select id="owner">
+          <option value="">全部负责人</option>
+          {{OWNER_OPTIONS}}
+        </select>
+      </div>
+      {{QA_ITEMS}}
+    </section>
+  </main>
+
+  <script>
+    const search = document.getElementById('search');
+    const priority = document.getElementById('priority');
+    const owner = document.getElementById('owner');
+    const items = Array.from(document.querySelectorAll('.qa'));
+    function applyFilters() {
+      const q = (search.value || '').trim().toLowerCase();
+      const p = priority.value;
+      const o = owner.value;
+      items.forEach(item => {
+        const text = item.innerText.toLowerCase();
+        const okSearch = !q || text.includes(q);
+        const okPriority = !p || item.dataset.priority === p;
+        const okOwner = !o || (item.dataset.owner || '').includes(o);
+        item.classList.toggle('hidden', !(okSearch && okPriority && okOwner));
+      });
+    }
+    search.addEventListener('input', applyFilters);
+    priority.addEventListener('change', applyFilters);
+    owner.addEventListener('change', applyFilters);
+  </script>
+</body>
+</html>

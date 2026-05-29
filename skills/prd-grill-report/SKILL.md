@@ -162,6 +162,44 @@ Cover these areas when relevant:
 
 Create a single self-contained `.html` file that can be sent to another person and opened directly from disk.
 
+## Mandatory Template Rendering
+
+Do not design the report page from scratch.
+
+Always start from the bundled template:
+
+```text
+templates/report-template.html
+```
+
+Copy that template and replace only the placeholder tokens:
+
+```text
+{{TITLE}}
+{{META_LINES}}
+{{METRICS}}
+{{READINESS_SUMMARY}}
+{{CONCLUSION_CALLOUT}}
+{{PRD_SUMMARY}}
+{{IMAGE_EVIDENCE_SECTION}}
+{{TOP_BLOCKERS}}
+{{OWNER_OPTIONS}}
+{{QA_ITEMS}}
+```
+
+Do not replace the base CSS, layout structure, header style, section spacing, or JavaScript filter behavior unless the user explicitly asks for a style change. The template is the source of truth for visual design.
+
+Expected generated snippets:
+
+- `{{META_LINES}}`: one or more `<p>...</p>` lines.
+- `{{METRICS}}`: repeated `<div class="metric"><b>...</b><span>...</span></div>`.
+- `{{CONCLUSION_CALLOUT}}`: either empty or `<div class="callout">...</div>`.
+- `{{PRD_SUMMARY}}`: one or more `<p>...</p>` or a compact `<ul>...</ul>`.
+- `{{IMAGE_EVIDENCE_SECTION}}`: empty when no images exist, otherwise a full `<section>...</section>`.
+- `{{TOP_BLOCKERS}}`: compact list or QA-style articles for the top P0/P1/conflict items.
+- `{{OWNER_OPTIONS}}`: repeated `<option value="产品">产品</option>` entries.
+- `{{QA_ITEMS}}`: repeated `<article class="qa" data-priority="P0" data-owner="产品 后端">...</article>`.
+
 Hard requirements:
 
 - The HTML must work as a standalone file over `file://`.
@@ -274,7 +312,7 @@ QA item visual rules:
 - P3 items use gray.
 - Avoid huge vertical gaps. Dense scanning is more important than decorative spacing.
 
-Suggested HTML skeleton:
+Reference skeleton from the mandatory template:
 
 ```html
 <!doctype html>
@@ -286,19 +324,17 @@ Suggested HTML skeleton:
   <style>/* all CSS here */</style>
 </head>
 <body>
-  <header class="hero">
+  <header>
     <h1>...</h1>
-    <p class="meta">...</p>
+    <p>...</p>
   </header>
-  <main class="shell">
-    <section class="panel conclusion">
+  <main>
+    <section>
       <h2>结论</h2>
-      <div class="metric-grid">...</div>
+      <div class="summary">...</div>
       <div class="callout">...</div>
     </section>
-    <section class="panel summary">...</section>
-    <section class="panel focus-board">...</section>
-    <section class="filters">...</section>
+    <section>...</section>
     <section class="qa-list">...</section>
   </main>
   <script>/* filter/search only, no external dependency */</script>
@@ -311,13 +347,12 @@ Minimum CSS behavior:
 ```css
 * { box-sizing: border-box; }
 body { margin: 0; background: #f6f7f9; color: #1f2937; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.55; }
-.hero { background: #111827; color: #fff; padding: 32px 40px 24px; }
-.hero h1 { margin: 0 0 10px; font-size: 28px; }
-.hero .meta { margin: 4px 0; color: #d0d5dd; }
-.shell { width: 100%; max-width: 1600px; margin: 0 auto; padding: 28px 40px 48px; }
-.dashboard-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; }
-.panel { min-width: 0; background: #fff; border: 1px solid #d9dee8; border-radius: 8px; margin-bottom: 18px; padding: 22px; }
-.metric-grid { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 12px; }
+header { background: #111827; color: #fff; padding: 32px 40px 24px; }
+header h1 { margin: 0 0 10px; font-size: 28px; }
+header p { margin: 4px 0; color: #d0d5dd; }
+main { padding: 28px 40px 48px; }
+section { background: #fff; border: 1px solid #d9dee8; border-radius: 8px; margin-bottom: 18px; padding: 22px; }
+.summary { display: grid; grid-template-columns: repeat(4, minmax(160px, 1fr)); gap: 12px; }
 .metric { border: 1px solid #d9dee8; border-radius: 6px; padding: 12px; background: #fbfcfe; }
 .metric b { display: block; font-size: 24px; }
 .metric span { color: #667085; font-size: 13px; }
@@ -333,10 +368,9 @@ body { margin: 0; background: #f6f7f9; color: #1f2937; font-family: -apple-syste
 .label { color: #667085; font-weight: 600; }
 .evidence, code { overflow-wrap: anywhere; }
 @media (max-width: 760px) {
-  .hero, .shell { padding-left: 18px; padding-right: 18px; }
-  .dashboard-grid { grid-template-columns: 1fr; }
-  .metric-grid { grid-template-columns: 1fr 1fr; }
-  .detail-grid { grid-template-columns: 1fr; }
+  header, main { padding-left: 18px; padding-right: 18px; }
+  .summary { grid-template-columns: 1fr 1fr; }
+  .grid { grid-template-columns: 1fr; }
 }
 ```
 
@@ -346,13 +380,14 @@ Before responding that the report is complete, inspect the generated HTML file. 
 
 Required checks:
 
-- HTML contains `<header class="hero">`.
-- CSS contains `.hero { background: #111827` or an equivalent `.hero` rule whose background is `#111827`.
+- HTML is generated from `templates/report-template.html`, with no unreplaced `{{PLACEHOLDER}}` tokens.
+- HTML contains `<header>`.
+- CSS contains `header {` with background `#111827`.
 - CSS contains `body { margin: 0; background: #f6f7f9`.
-- HTML contains `<main class="shell">`.
-- HTML contains a conclusion panel with `class="panel conclusion"`.
-- HTML contains a metric grid with `class="metric-grid"`.
-- HTML does not use a centered article layout such as `max-width: 960px`, `max-width: 1000px`, `max-width: 1100px`, or `margin: 0 auto` as the main page layout without the dark full-width header.
+- HTML contains `<main>`.
+- HTML contains a conclusion section whose first heading is `结论`.
+- HTML contains a metric grid with `class="summary"`.
+- HTML does not use a centered article layout such as `max-width: 960px`, `max-width: 1000px`, or `max-width: 1100px`.
 - HTML does not use English section titles like `Executive Summary`, `Problem Statement`, `Proposed Solution`, `Success Criteria`, or `User Experience & Functionality` unless the source PRD itself is English and the user asked for English output.
 - First viewport contains the dark header, conclusion panel, and metric cards.
 
@@ -361,7 +396,7 @@ If a check fails, do not ask the user whether to fix it. Fix it immediately and 
 Suggested validation command when a local shell is available:
 
 ```bash
-rg -n 'class="hero"|#111827|#f6f7f9|class="panel conclusion"|class="metric-grid"|Executive Summary|Problem Statement|Proposed Solution|Success Criteria|max-width: 960px|max-width: 1000px|max-width: 1100px' <generated-report.html>
+rg -n '#111827|#f6f7f9|class="summary"|\\{\\{|Executive Summary|Problem Statement|Proposed Solution|Success Criteria|max-width: 960px|max-width: 1000px|max-width: 1100px' <generated-report.html>
 ```
 
 ## Readiness Verdict
