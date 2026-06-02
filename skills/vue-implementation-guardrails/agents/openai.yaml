@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vue Implementation Guardrails"
+  short_description: "Keep Vue changes scoped, simple, and maintainable while coding."
+  default_prompt: "Use vue-implementation-guardrails while implementing this Vue change. Keep the solution scoped, simple, and aligned with existing project conventions."

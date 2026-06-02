@@ -16,6 +16,12 @@ Install `prd-grill-report` globally:
 npx skills add https://github.com/zcegg/agent-skills --skill prd-grill-report -g -y
 ```
 
+Install `vue-implementation-guardrails` globally:
+
+```bash
+npx skills add https://github.com/zcegg/agent-skills --skill vue-implementation-guardrails -g -y
+```
+
 ## prd-grill
 
 `prd-grill` interrogates unclear PRDs before solution design, estimation, implementation planning, or coding.
@@ -38,4 +44,16 @@ Example prompt:
 
 ```text
 Use prd-grill-report to analyze this PRD, inspect relevant code evidence if provided, and generate a local HTML QA report.
+```
+
+## vue-implementation-guardrails
+
+`vue-implementation-guardrails` keeps Vue 2 / Vue 3 implementation scoped, maintainable, and consistent with existing project conventions.
+
+Use it with `vue-best-practices`; add `vue-options-api-best-practices` for Vue 2 or Options API work.
+
+Example prompt:
+
+```text
+Use vue-implementation-guardrails while implementing this Vue requirement. Keep the change scoped, reuse existing project conventions, avoid unnecessary abstraction, and report any guardrail exceptions.
 ```
