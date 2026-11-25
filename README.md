@@ -2,7 +2,7 @@
 
 Personal agent skills for Codex and other AI coding agents.
 
-## Install prd-grill
+## Install skills
 
 Install `prd-grill` globally:
 
@@ -20,6 +20,20 @@ Install `vue-implementation-guardrails` globally:
 
 ```bash
 npx skills add https://github.com/zcegg/agent-skills --skill vue-implementation-guardrails -g -y
+```
+
+Install `prd-first-read` globally with this command.
+
+```bash
+npx skills add https://github.com/zcegg/agent-skills --skill prd-first-read -g -y
+```
+
+## prd-first-read
+
+`prd-first-read` turns a PRD into a standalone, interactive HTML guide for someone reading the requirement for the first time. The overview shows the business flow, its branches, and key exceptions. Select a change to see which page it affects and what the user can see or do. Unresolved rules are marked where they affect the flow.
+
+```text
+Use prd-first-read to help me understand this PRD from scratch. Save the first-round guide as a single HTML file.
 ```
 
 ## prd-grill

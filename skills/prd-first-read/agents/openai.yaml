@@ -1,0 +1,4 @@
+interface:
+  display_name: "从零读懂需求"
+  short_description: "把业务目的、关键分支和用户可见的页面行为整理成可留存的单页 HTML"
+  default_prompt: "请用 $prd-first-read 帮我从零读懂这份需求，保存为一页 HTML。"
