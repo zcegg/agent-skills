@@ -28,6 +28,12 @@ Install `prd-first-read` globally with this command.
 npx skills add https://github.com/zcegg/agent-skills --skill prd-first-read -g -y
 ```
 
+Install the second-round scenario guide globally with this command.
+
+```bash
+npx skills add https://github.com/zcegg/agent-skills --skill prd-scenario-guide -g -y
+```
+
 ## prd-first-read
 
 `prd-first-read` turns a PRD into a standalone, interactive HTML guide for someone reading the requirement for the first time. The overview shows the business flow, its branches, and key exceptions. Select a change to see which page it affects and what the user can see or do. Unresolved rules are marked where they affect the flow.
@@ -35,6 +41,10 @@ npx skills add https://github.com/zcegg/agent-skills --skill prd-first-read -g -
 ```text
 Use prd-first-read to help me understand this PRD from scratch. Save the first-round guide as a single HTML file.
 ```
+
+## prd-scenario-guide
+
+`prd-scenario-guide` uses the PRD and available frontend code to build an offline HTML guide in the same visual style as `prd-first-read`. Start with the scenario overview, then select a scenario to see what the user sees, what they can do, and where each action leads. Expand the state diagram and decision table to inspect frontend conditions and open questions.
 
 ## prd-grill
 
