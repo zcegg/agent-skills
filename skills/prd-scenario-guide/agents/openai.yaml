@@ -1,4 +1,4 @@
 interface:
   display_name: "第二轮 · 场景交互导读"
   short_description: "从场景总览下钻到页面分镜，按需核对状态图、决策表与待确认项"
-  default_prompt: "用 $prd-scenario-guide 生成一页第二轮交互导读 HTML，先看场景，再看用户的页面与去向，按需展开前端判断。"
+  default_prompt: "用 $prd-scenario-guide 生成石墨分镜风格的一页第二轮交互导读 HTML，先看场景，再看用户的页面与去向，按需展开前端判断。"

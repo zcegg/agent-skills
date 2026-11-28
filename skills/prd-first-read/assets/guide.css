@@ -1,52 +1,69 @@
-/* Inline in the exported HTML. Both PRD guides use the same desktop palette. */
 :root {
-  --guide-bg: #252333;
-  --guide-panel: #353245;
-  --guide-text: #f8f5ec;
-  --guide-muted: #d7cfdc;
-  --guide-accent: #f4ce78;
-  --guide-paper: #f7f5ed;
-  --guide-ink: #302d36;
-  --guide-line: #666272;
+  color-scheme: dark;
+  --bg: #1e2323;
+  --rail: #1b2020;
+  --panel: #282e2e;
+  --border: #46504e;
+  --rule: #5f6866;
+  --text: #f3f3eb;
+  --sub: #c2cbc5;
+  --mint: #99d5b5;
+  --on-mint: #15291f;
+  --rail-width: clamp(152px, 14.6vw, 240px);
+  --gutter: clamp(26px, 3vw, 60px);
 }
-.guide, .guide * { box-sizing: border-box; }
-.guide {
-  margin: 0;
-  color: var(--guide-text);
-  background: var(--guide-bg);
-  font: 16px/1.55 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-}
-.guide__page { width: 92%; max-width: 1520px; margin: auto; padding: 24px 0 36px; }
-.guide__header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--guide-line); }
-.guide__title { font-size: clamp(32px, 3.4vw, 50px); line-height: 1.18; margin: 20px 0 8px; }
-.guide__summary { margin: 0 0 20px; color: var(--guide-muted); }
-.guide a { color: inherit; text-underline-offset: 3px; }
-.guide :focus-visible { outline: 3px solid var(--guide-accent); outline-offset: 3px; }
+* { box-sizing: border-box; }
+.guide { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 "PingFang SC","Microsoft YaHei",system-ui,sans-serif; }
+.guide__header { position: fixed; inset: 0 auto 0 0; width: var(--rail-width); border-right: 1px solid var(--border); background: var(--rail); padding: clamp(20px,2.1vw,36px) 0; }
+.guide__header strong { display: block; padding-left: clamp(18px,2.2vw,36px); font-size: clamp(22px,2.1vw,34px); line-height: 1.3; font-weight: 650; }
+.guide__nav { display: grid; gap: 10px; margin-top: clamp(30px,4.5vh,56px); }
+.guide__nav a { display: flex; gap: 14px; align-items: center; border-left: 4px solid transparent; padding: 8px 8px 8px clamp(16px,2vw,32px); text-decoration: none; font-size: clamp(16px,1.45vw,22px); }
+.guide__nav a::before { content: ""; width: .8em; height: .8em; border: 2px solid currentColor; border-radius: 50%; flex: none; }
+.guide__nav a[aria-current=page] { border-color: var(--mint); font-weight: 650; }
+.guide__nav a[aria-current=page]::before { border-color: var(--mint); background: var(--mint); box-shadow: inset 0 0 0 3px var(--rail); }
+.guide__page { margin-left: var(--rail-width); padding: clamp(22px,4.1vh,51px) var(--gutter) 30px; max-width: 1720px; }
+.guide__title { margin: 0 0 9px; font-size: clamp(32px,3.13vw,54px); letter-spacing: -.035em; line-height: 1.23; font-weight: 650; }
+.guide__summary { margin: 0 0 clamp(16px,2.8vh,30px); color: var(--sub); font-size: clamp(15px,1.2vw,20px); }
+.guide a { color: inherit; text-underline-offset: 4px; }
+.guide button { font: inherit; color: inherit; cursor: pointer; }
 .guide [hidden] { display: none !important; }
-.guide-screen { padding: 12px 15px; border-radius: 5px; color: var(--guide-ink); background: var(--guide-paper); }
-.guide-screen small { display: block; color: #635e68; font-size: 14px; }
-.guide-screen strong { display: block; font-size: clamp(18px, 1.6vw, 24px); }
-.guide-flag { color: var(--guide-accent); font-size: 14px; }
-.guide-screen .guide-flag { color: #754b1a; }
-
-/* Use flow arrows only between successive events; route the real forks separately. */
-.guide-flow, .guide-branches { display: grid; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; }
-.guide-flow { gap: 40px; }
-.guide-branches { gap: 16px; }
-.guide-step { position: relative; }
-.guide-step[data-next]::after {
-  content: ""; pointer-events: none; position: absolute; left: calc(100% + 4px); top: 36px;
-  width: 32px; height: 18px; background: var(--guide-accent);
-  clip-path: polygon(0 39%, 63% 39%, 63% 0, 100% 50%, 63% 100%, 63% 61%, 0 61%);
-}
-.guide a.guide-screen { color: var(--guide-ink); }
-.guide-step > .guide-screen { display: block; text-decoration: none; }
-.guide-branch { padding: 14px 16px; background: var(--guide-panel); border-radius: 7px; }
-.guide-branch h3 { color: var(--guide-accent); margin: 0 0 6px; }
-.guide-fork { display: block; width: 100%; overflow: visible; }
-.guide-fork .edge { fill: none; stroke: var(--guide-accent); stroke-width: 3px; vector-effect: non-scaling-stroke; }
-.guide-fork .arrowhead { fill: var(--guide-accent); }
-.guide-fork .edge.is-lit { stroke: #fff5d5; stroke-width: 4px; }
-.guide [aria-current="true"] { outline: 2px solid var(--guide-accent); outline-offset: 2px; }
-.guide-detail { margin: 12px 0; padding: 16px 20px; background: var(--guide-paper); color: var(--guide-ink); border-radius: 5px; }
-.guide-detail :focus-visible, .guide-screen :focus-visible { outline-color: #6c4d18; }
+.guide :focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+.guide ::selection { background: var(--mint); color: var(--on-mint); }
+.guide summary { cursor: pointer; width: fit-content; }
+.guide-flow,.guide-branches { display: grid; }
+.guide-flow { grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(35px,4.7vw,75px); border-top: 1px solid var(--rule); padding-top: clamp(18px,3.5vh,38px); }
+.guide-step { position: relative; min-width: 0; border: 1px solid #929e97; border-radius: 8px; padding: clamp(9px,1.5vh,16px) 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.guide-step[data-next]::after { content: ""; position: absolute; left: calc(100% + .9vw); top: 49%; width: clamp(19px,2.7vw,46px); height: 15px; background: var(--mint); clip-path: polygon(0 40%,76% 40%,61% 6%,71% 0,100% 50%,71% 100%,61% 94%,76% 60%,0 60%); pointer-events: none; }
+.guide-step .guide-screen { display: block; text-decoration: none; }
+.guide-screen small { display: block; font-size: 13px; color: var(--sub); }
+.guide-screen strong { font-size: clamp(18px,1.57vw,27px); }
+.guide-step p { margin: 4px 0 0; color: var(--sub); font-size: clamp(14px,1.02vw,17px); }
+.guide-step > .pick:not(.guide-screen) { font-size: 13px; color: var(--mint); }
+.guide-step:has(.pick:hover), .guide-branch:has(.pick:hover) { border-color: var(--mint); }
+.pick[aria-current=true] { outline: 2px solid var(--mint); outline-offset: 2px; }
+.split { position: relative; height: clamp(65px,11vh,124px); }
+.split h2 { position: absolute; z-index: 1; left: 50%; top: 45%; transform: translate(-50%,-50%); font-size: clamp(15px,1.3vw,21px); padding: 3px 16px; border-radius: 5px; background: var(--mint); color: var(--on-mint); margin: 0; white-space: nowrap; }
+.guide-fork { width: 100%; height: 100%; display:block; }
+.guide-fork .edge { fill:none; stroke: var(--mint); stroke-width:3px; vector-effect:non-scaling-stroke; }
+.guide-fork .arrowhead { fill:var(--mint); }
+.guide-fork .hot .edge { stroke:#c0f8d9; stroke-width:4px; }
+.guide-branches { grid-template-columns: repeat(2,minmax(0,1fr)); gap: clamp(20px,3.3vw,58px); }
+.guide-branch { border:1px solid #919b96; border-radius:8px; padding:clamp(12px,1.9vh,22px) clamp(14px,1.7vw,27px); }
+.branch-title { display:block; text-decoration:none; }
+.branch-title span { display:block; font-size:clamp(20px,2vw,34px); font-weight:650; }
+.branch-title strong { display:block; margin:8px 0 10px; padding:5px 12px; border-radius:5px; background:var(--mint); color:var(--on-mint); font-size:clamp(17px,1.55vw,26px); }
+.guide-branch p { border-top:1px solid var(--border); padding-top:9px; margin:0; font-size:clamp(14px,1.12vw,19px); }
+.out { display:grid; gap:3px; margin-top:6px; }
+.out a { width:fit-content; color:var(--sub); text-decoration:none; font-size:clamp(14px,1.02vw,18px); }
+.out a::before { content:"•"; margin-right:8px; color:var(--mint); }
+.out a:hover,.guide-nav a:hover { text-decoration:underline; }
+.audit { margin-top:clamp(14px,3.5vh,42px); border-top:1px solid var(--rule); }
+.audit a { display:flex; align-items:baseline; gap:16px; padding:clamp(12px,2vh,24px) 0; text-decoration:none; }
+.audit b { font-size:clamp(16px,1.55vw,25px); }
+.audit span { border-left:1px solid var(--rule); padding-left:16px; color:var(--sub); }
+.audit i { margin-left:auto; white-space:nowrap; font-style:normal; font-size:14px; color:var(--mint); }
+.guide-detail { background:var(--panel); border:1px solid var(--border); border-radius:7px; padding:20px 24px; margin:12px 0; }
+.guide-detail h2,.guide-detail p { margin:5px 0; }
+.guide-detail button { float:right; background:transparent; border:1px solid var(--rule); border-radius:4px; padding:5px 10px; }
+.guide-detail a,.guide-detail .pending { color:var(--mint); }
+.source-note { color:var(--sub); font-size:14px; }

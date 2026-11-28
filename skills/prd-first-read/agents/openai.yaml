@@ -1,4 +1,4 @@
 interface:
   display_name: "从零读懂需求"
   short_description: "用一页业务分镜看清主线、条件与分支，点业务变化查看角色和页面"
-  default_prompt: "用 $prd-first-read 生成一页第一轮业务导读 HTML，先看主线和分支，再点选业务变化看页面行为。"
+  default_prompt: "用 $prd-first-read 生成石墨分镜风格的一页第一轮业务导读 HTML，先看主线和分支，再点选业务变化看页面行为。"
